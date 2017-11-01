@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "tslint:recommended",
+    "tslint-eslint-rules"
+  ],
+  "jsRules": {},
+  "rules": {
+    "quotemark": [true, "single"],
+    "indent": [true, "spaces", 2],
+    "semicolon": [true, "always", "ignore-interfaces"],
+    "interface-name": [false, "always-prefix"],
+    "max-classes-per-file": [true, 1, "exclude-class-expressions"]
+  },
+  "rulesDirectory": []
+}
