@@ -83,13 +83,17 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
     }).addTo(map);
 
     let bearingPath;
+    let speedPath;
     if (query.bearing < 180) {
       const arrowEndPoint = arrow._calculateEndPoint(point, 0.95 * query.radius / 1000, query.bearing);
       const bearingPoint = arrow._calculateEndPoint(point, 0.85 * query.radius / 1000, query.bearing);
+      const speedPoint = arrow._calculateEndPoint(point, 0.75 * query.radius / 1000, query.bearing);
       bearingPath = [bearingPoint, arrowEndPoint];
+      speedPath = [speedPoint, arrowEndPoint];
     } else {
       const bearingPoint = arrow._calculateEndPoint(point, 0.95 * query.radius / 1000, query.bearing);
       bearingPath = [bearingPoint, point];
+      speedPath = [bearingPoint, point];
     }
 
     let bearingText = query.bearing + '°';
@@ -105,6 +109,16 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
       size: [query.radius / 20, 'm'],
       verticalOffset: [-10, 'm'],
     }).addTo(map);
+
+    if (query.speed) {
+      // show speed
+      const speed = Math.round(query.speed * 3.6);
+      LT.textPath(speedPath, `${speed} km/h`, {
+        color,
+        size: [query.radius / 20, 'm'],
+        verticalOffset: [35, 'm'],
+      }).addTo(map);
+    }
   }
 }
 

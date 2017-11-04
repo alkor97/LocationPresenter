@@ -29,12 +29,14 @@ interface WritableTextPathOptions extends TextPathOptions {
   [key: string]: any;
 }
 
-const textPathOptionsDefaults: WritableTextPathOptions = {
-  size: [10, DistanceUnit.PIXELS],
-  verticalOffset: [0, DistanceUnit.PIXELS],
-  color: 'black',
-  align: TextAlign.LEFT,
-};
+function textPathOptionsDefaults(): WritableTextPathOptions {
+  return {
+    size: [10, DistanceUnit.PIXELS],
+    verticalOffset: [0, DistanceUnit.PIXELS],
+    color: 'black',
+    align: TextAlign.LEFT,
+  };
+}
 
 interface AccessibleRenderer extends L.Renderer {
   _container: SVGElement;
@@ -62,7 +64,7 @@ export function parseDistance(distance: number | string): Distance {
 
 export class TextPath extends L.Polyline {
   private text: string;
-  private textPathOptions = textPathOptionsDefaults;
+  private textPathOptions = textPathOptionsDefaults();
   private textNode: SVGElement;
 
   // private interface of Path
