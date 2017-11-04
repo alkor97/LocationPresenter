@@ -6,9 +6,8 @@ export interface Query {
   readonly radius: number;
   readonly name: string;
   readonly phone: string;
-  readonly bearing: number;
-  readonly speed: number;
-  readonly zoom: number;
+  readonly bearing?: number;
+  readonly speed?: number;
   readonly hasStreetView: boolean;
 }
 
@@ -16,12 +15,11 @@ export class ParsedQuery {
   public lat: number = 53.4296143;
   public lng: number = 14.5445406;
   public alt: number = 37;
-  public zoom: number = 13;
   public radius: number = 750;
   public name: string = 'Krysia';
   public phone: string = '+48123456789';
-  public bearing: number = 23;
-  public speed: number = 15.3;
+  public bearing?: number;
+  public speed?: number;
   public hasStreetView: boolean = false;
   [key: string]: any;
 }

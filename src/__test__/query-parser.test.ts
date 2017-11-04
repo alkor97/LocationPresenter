@@ -20,7 +20,6 @@ describe('QuerParser', () => {
       speed: 6.78,
       // defaults, not part of external interface
       hasStreetView: false,
-      zoom: 13,
     };
     const actual = parseQuery(`?lat=${expected.lat}&lng=${expected.lng}&alt=${expected.alt}&radius=${expected.radius}`
       + `&name=${expected.name}&phone=${expected.phone}&bearing=${expected.bearing}&speed=${expected.speed}`);
