@@ -8,8 +8,12 @@ export function isStreetViewSupportedAt(latLng: LatLng): Promise<boolean> {
   return new Promise((resolve, reject) => {
     const width = 64;
     const height = 32;
-    const referencePromise = getPromiseOfReferenceImageWithoutStreetView(width, height);
-    const actualPromise = getPromiseOfActualStreetViewImage(latLng, width, height);
+
+    const referenceImage = getImage(width, height);
+    const referencePromise = getPromiseOfReferenceImageWithoutStreetView(referenceImage);
+
+    const actualImage = getImage(width, height);
+    const actualPromise = getPromiseOfActualStreetViewImage(latLng, actualImage);
 
     referencePromise.catch((reason) => {
       reject(`unable to load image of empty street view (${reason})`);
@@ -28,17 +32,20 @@ export function isStreetViewSupportedAt(latLng: LatLng): Promise<boolean> {
   });
 }
 
-function getPromiseOfReferenceImageWithoutStreetView(width: number, height: number): Promise<Pixels> {
-  return getImagePromise(getEmptyStreetViewUrl(width, height), width, height);
+function getPromiseOfReferenceImageWithoutStreetView(image: HTMLImageElement): Promise<Pixels> {
+  return getImagePromise(getEmptyStreetViewUrl(image.width, image.height), image);
 }
 
-function getPromiseOfActualStreetViewImage(latLng: LatLng, width: number, height: number): Promise<Pixels> {
-  return getImagePromise(getStreetViewUrl(latLng, width, height), width, height);
+function getPromiseOfActualStreetViewImage(latLng: LatLng, image: HTMLImageElement): Promise<Pixels> {
+  return getImagePromise(getStreetViewUrl(latLng, image.width, image.height), image);
 }
 
-function getImagePromise(src: string, width: number, height: number): Promise<Pixels> {
+function getImage(width: number, height: number): HTMLImageElement {
+  return new Image(width, height);
+}
+
+function getImagePromise(src: string, image: HTMLImageElement): Promise<Pixels> {
   return new Promise((resolve, reject) => {
-    const image = new Image(width, height);
     image.crossOrigin = 'Anonymous';
     image.addEventListener('load', () => {
       if (image.naturalWidth + image.naturalHeight > 0) {
