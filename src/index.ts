@@ -132,8 +132,10 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
   const initialZoom = 13;
   const map = L.map('map').setView(defaultLocation, initialZoom);
   const location = L.latLng(query.lat, query.lng);
-  isStreetViewSupportedAt(location).then((hasStreetView) => {
-    (query as ParsedQuery).hasStreetView = hasStreetView;
-  });
+  if (query.bearing || query.bearing === 0) {
+    isStreetViewSupportedAt(location).then((hasStreetView) => {
+      (query as ParsedQuery).hasStreetView = hasStreetView;
+    });
+  }
   locationSet(map, query, location);
 })();
