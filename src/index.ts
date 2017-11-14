@@ -135,6 +135,10 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
   if (query.bearing || query.bearing === 0) {
     isStreetViewSupportedAt(location).then((hasStreetView) => {
       (query as ParsedQuery).hasStreetView = hasStreetView;
+    }).catch((reason) => {
+      if (query.dbg) {
+        alert(reason);
+      }
     });
   }
   locationSet(map, query, location);

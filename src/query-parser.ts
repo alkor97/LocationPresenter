@@ -9,6 +9,7 @@ export interface Query {
   readonly bearing?: number;
   readonly speed?: number;
   readonly hasStreetView: boolean;
+  readonly dbg?: number;
 }
 
 export class ParsedQuery {
@@ -21,11 +22,12 @@ export class ParsedQuery {
   public bearing?: number;
   public speed?: number;
   public hasStreetView: boolean = false;
+  public dbg?: number = 0;
   [key: string]: any;
 }
 
 export function parseQuery(queryString: string): Query {
-  const numberProperties: string[] = ['lat', 'lng', 'alt', 'radius', 'bearing', 'speed'];
+  const numberProperties: string[] = ['lat', 'lng', 'alt', 'radius', 'bearing', 'speed', 'dbg'];
   return queryString.trim()
     .substring(queryString.charAt(0) === '?' ? 1 : 0)
     .split('&')
