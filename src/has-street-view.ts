@@ -1,46 +1,64 @@
 
 import { LatLng, latLng as createLatLng } from 'leaflet';
 import pixelmatch = require('pixelmatch');
+import { retryPromise } from './promise-retrier';
 
 type Pixels = number[] | Uint8ClampedArray;
+export enum ImageType {
+  EMPTY, ACTUAL,
+}
+export type ImageProvider = (type: ImageType, width: number, height: number) => HTMLImageElement;
 
-export function isStreetViewSupportedAt(latLng: LatLng): Promise<boolean> {
+export function isStreetViewSupportedAt(latLng: LatLng, imageProvider: ImageProvider = getImage): Promise<boolean> {
   return new Promise((resolve, reject) => {
     const width = 64;
     const height = 32;
+    const retries = 4;
+    const timeout = 1000;
 
-    const referenceImage = getImage(width, height);
-    const referencePromise = getPromiseOfReferenceImageWithoutStreetView(referenceImage);
+    const referenceImage = imageProvider(ImageType.EMPTY, width, height);
+    const referencePromise = retryPromise(() => getPromiseOfReferenceImageWithoutStreetView(referenceImage),
+      retries, timeout);
 
-    const actualImage = getImage(width, height);
-    const actualPromise = getPromiseOfActualStreetViewImage(latLng, actualImage);
-
-    referencePromise.catch((reason) => {
-      reject(`unable to load image of empty street view (${reason})`);
-    });
-    actualPromise.catch((reason) => {
-      reject(`unable to load image of street view (${reason})`);
-    });
+    const actualImage = imageProvider(ImageType.ACTUAL, width, height);
+    const actualPromise = retryPromise(() => getPromiseOfActualStreetViewImage(latLng, actualImage),
+      retries, timeout);
 
     Promise.all([referencePromise, actualPromise]).then((images: Pixels[]) => {
       const [emptyStreetView, actualStreetView] = images;
       const mismatchedPixels = pixelmatch(emptyStreetView, actualStreetView, undefined, width, height);
       resolve(mismatchedPixels > 0);
     }).catch((reason) => {
-      reject(`unable to street view load images (${reason})`);
+      reject(reason);
+    });
+  });
+}
+
+function getNamedPromise(promise: Promise<Pixels>, name: string): Promise<Pixels> {
+  return new Promise((resolve, reject) => {
+    promise.then((pixels) => {
+      resolve(pixels);
+    }).catch((reason) => {
+      reject(`unable to load ${name} image`);
     });
   });
 }
 
 function getPromiseOfReferenceImageWithoutStreetView(image: HTMLImageElement): Promise<Pixels> {
-  return getImagePromise(getEmptyStreetViewUrl(image.width, image.height), image);
+  return getNamedPromise(
+    getImagePromise(
+      getEmptyStreetViewUrl(image.width, image.height), image),
+      'empty street view');
 }
 
 function getPromiseOfActualStreetViewImage(latLng: LatLng, image: HTMLImageElement): Promise<Pixels> {
-  return getImagePromise(getStreetViewUrl(latLng, image.width, image.height), image);
+  return getNamedPromise(
+    getImagePromise(
+      getStreetViewUrl(latLng, image.width, image.height), image),
+      'actual street view');
 }
 
-function getImage(width: number, height: number): HTMLImageElement {
+function getImage(imageType: ImageType, width: number, height: number): HTMLImageElement {
   return new Image(width, height);
 }
 
@@ -58,8 +76,8 @@ function getImagePromise(src: string, image: HTMLImageElement): Promise<Pixels> 
         reject(`unable to load image ${src} (no data)`);
       }
     });
-    image.addEventListener('error', (reason) => {
-      reject(`unable to load image ${src} (${reason})`);
+    image.addEventListener('error', () => {
+      reject(`unable to load image ${src}`);
     });
     image.src = src;
   });
