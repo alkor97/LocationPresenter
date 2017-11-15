@@ -102,10 +102,10 @@ function getPixelsPromise(image: HTMLImageElement): Promise<Pixels> {
   });
 }
 
-function getEmptyStreetViewUrl(width: number, height: number): string {
+export function getEmptyStreetViewUrl(width: number, height: number): string {
   return getStreetViewUrl(createLatLng(0, 0), width, height);
 }
 
-function getStreetViewUrl(latLng: LatLng, width: number, height: number): string {
+export function getStreetViewUrl(latLng: LatLng, width: number, height: number): string {
   return `http://maps.googleapis.com/maps/api/streetview?size=${width}x${height}&location=${latLng.lat},${latLng.lng}`;
 }

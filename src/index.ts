@@ -1,6 +1,7 @@
 import * as L from 'leaflet';
 import 'leaflet-arrows';
 import './assets';
+import { DebugImages } from './debug-images';
 import { isStreetViewSupportedAt } from './has-street-view';
 import * as LT from './leaflet-textpath';
 import { ParsedQuery, parseQuery, Query } from './query-parser';
@@ -149,6 +150,12 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
   const initialZoom = 13;
   const map = L.map('map').setView(defaultLocation, initialZoom);
   const location = L.latLng(query.lat, query.lng);
+  if (query.dbg) {
+    new DebugImages({position: 'topright'})
+      .withLocation(location)
+      .addTo(map);
+  }
+
   if (query.bearing || query.bearing === 0) {
     isStreetViewSupportedAt(location).then((hasStreetView) => {
       (query as ParsedQuery).hasStreetView = hasStreetView;
