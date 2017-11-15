@@ -1,5 +1,6 @@
 
 import './assets/css/index.css';
+import './assets/favicon.ico';
 import './assets/img/eye.png';
 
 import 'leaflet/dist/leaflet.css';
