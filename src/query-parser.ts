@@ -26,17 +26,47 @@ export class ParsedQuery {
   [key: string]: any;
 }
 
+const NUMBER_PROPERTIES = {lat: 1, lng: 1, alt: 1, radius: 1, bearing: 1, speed: 1, dbg: 1};
+
 export function parseQuery(queryString: string): Query {
-  const numberProperties: string[] = ['lat', 'lng', 'alt', 'radius', 'bearing', 'speed', 'dbg'];
-  return queryString.trim()
-    .substring(queryString.charAt(0) === '?' ? 1 : 0)
-    .split('&')
+  const q = queryString.trim().replace(/^\?/, '');
+  if (q.indexOf('q=') === 0) {
+    return parseCSVQuery(q);
+  } else {
+    return parseObjectQuery(q);
+  }
+}
+
+function parseCSVQuery(csv: string): Query {
+  const positionMapping = ['lat', 'lng', 'alt', 'radius', 'name', 'phone', 'bearing', 'speed', 'dbg'];
+  return csv.replace(/^q[\=]/, '')
+    .split(',')
+    .reduce((state: ParsedQuery, entry: string, position: number) => {
+      const key = positionMapping[position];
+      if (key) {
+        const value = decodeURIComponent(entry);
+        if (value) {
+          if (key in NUMBER_PROPERTIES) {
+            state[key] = parseFloat(value);
+          } else {
+            state[key] = value;
+          }
+        }
+      }
+      return state;
+    }, new ParsedQuery());
+}
+
+function parseObjectQuery(queryString: string): Query {
+  const allowed = new ParsedQuery();
+  allowed.bearing = allowed.speed = 0;
+  return queryString.split('&')
     .reduce((state: ParsedQuery, pairString: string) => {
       const pair = pairString.split('=');
       const key = decodeURIComponent(pair[0]);
-      if (key) {
+      if (key in allowed) {
         const value = decodeURIComponent(pair[1]);
-        if (numberProperties.indexOf(key) > -1) {
+        if (key in NUMBER_PROPERTIES) {
           state[key] = parseFloat(value);
         } else {
           state[key] = value;
