@@ -17,7 +17,7 @@ function getStreetViewLink(q: Query): string {
   if (isChromeOnAndroid()) {
     const fallback = encodeURI(regularLink);
     return 'intent://view/#Intent;package=com.google.android.apps.maps;scheme=google.streetview:'
-      + `cbll=${q.lat},${q.lng}&cbp=0,${q.bearing},0,0,0;`
+      + `cbll=${q.lat},${q.lng}&cbp=1,${q.bearing},,0,1&mz=15;`
       + `S.browser_fallback_url=${fallback};end;`;
   }
   return regularLink;
