@@ -15,7 +15,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^21.1.5",
-    "@types/leaflet": "^1.0.68",
+    "@types/leaflet": "^1.2.2",
     "awesome-typescript-loader": "^3.2.3",
     "canvas-prebuilt": "^1.6.5-prerelease.1",
     "css-loader": "^0.28.4",
