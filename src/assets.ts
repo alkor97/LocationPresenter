@@ -2,6 +2,8 @@
 import './assets/css/index.css';
 import './assets/favicon.ico';
 import './assets/img/eye.png';
+import './assets/img/gps.png';
+import './assets/img/network.png';
 
 import 'leaflet/dist/leaflet.css';
 
