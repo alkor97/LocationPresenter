@@ -4,7 +4,7 @@ import './assets';
 import { DebugImages } from './debug-images';
 import { isStreetViewSupportedAt } from './has-street-view';
 import * as LT from './leaflet-textpath';
-import { ParsedQuery, parseQuery, Query } from './query-parser';
+import { ParsedQuery, parseQuery, Provider, Query } from './query-parser';
 
 function isChromeOnAndroid() {
   const ua = navigator.userAgent;
@@ -26,12 +26,14 @@ function getStreetViewLink(q: Query): string {
 function preparePopup(q: Query): string {
   const withStreetView = q.hasStreetView ? 'inline' : 'none';
   const link = getStreetViewLink(q);
-  return `<b>${q.name}</b><br>
-          <sup><i>${q.phone}</i></sup>
-          <div><a style='display: ${withStreetView}'
-            href='${link}' target='_blank'>
-            <img src="img/eye.png" width="16" height="16"/>
-          </a></div>`;
+  const date = q.date.toLocaleString();
+  const provider = q.provider !== Provider.UNKNOWN
+    ? `&nbsp;<img src="img/${q.provider}.png" width="16" height="16"/>`
+    : '';
+  return `${date}${provider}<br>
+          <h1>${q.name}&nbsp;<a style='display: ${withStreetView}' href='${link}'
+          target='_blank'><img src="img/eye.png" width="16" height="16"/></a></h1>
+          <i><a href="tel:${q.phone}">${q.phone}</a></i>`;
 }
 
 function locationSet(map: L.Map, query: Query, point: L.LatLng) {
@@ -68,11 +70,11 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
       degree: arrowAngle,
       distance: query.radius / 1000,
     }, {
-        distanceUnit: 'km',
-        arrowheadLength: 0.05 * query.radius / 1000,
-        color,
-        weight: arrowWeight,
-      }).addTo(map);
+      distanceUnit: 'km',
+      arrowheadLength: 0.05 * query.radius / 1000,
+      color,
+      weight: arrowWeight,
+    }).addTo(map);
 
     const textSize: [number, string] = [query.radius / 10, 'm'];
     const verticalOffset: [number, string] = query.bearing < 90 || query.bearing > 270 ? [0, 'px'] : textSize;
@@ -104,12 +106,12 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
     let speedPath;
     if (query.bearing < 180) {
       const arrowEndPoint = arrow._calculateEndPoint(point, 0.95 * query.radius / 1000, query.bearing);
-      const bearingPoint = arrow._calculateEndPoint(point, 0.85 * query.radius / 1000, query.bearing);
-      const speedPoint = arrow._calculateEndPoint(point, 0.75 * query.radius / 1000, query.bearing);
+      const bearingPoint = arrow._calculateEndPoint(point, 0.8 * query.radius / 1000, query.bearing);
+      const speedPoint = arrow._calculateEndPoint(point, 0.7 * query.radius / 1000, query.bearing);
       bearingPath = [bearingPoint, arrowEndPoint];
       speedPath = [speedPoint, arrowEndPoint];
     } else {
-      const bearingPoint = arrow._calculateEndPoint(point, 0.95 * query.radius / 1000, query.bearing);
+      const bearingPoint = arrow._calculateEndPoint(point, 0.9 * query.radius / 1000, query.bearing);
       bearingPath = [bearingPoint, point];
       speedPath = [bearingPoint, point];
     }
@@ -125,7 +127,7 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
     LT.textPath(bearingPath, bearingText, {
       color,
       size: [query.radius / 20, 'm'],
-      verticalOffset: [-10, 'm'],
+      verticalOffset: [-20, 'm'],
     }).addTo(map);
 
     if (query.speed) {
@@ -134,8 +136,51 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
       LT.textPath(speedPath, `${speed} km/h`, {
         color,
         size: [query.radius / 20, 'm'],
-        verticalOffset: [35, 'm'],
+        verticalOffset: [45, 'm'],
       }).addTo(map);
+    }
+
+    if (query.alt) {
+      const altArrowStartPoint = query.bearing < 180
+        ? arrow._calculateEndPoint(point, textSize[0] / 1000, 270)
+        : arrow._calculateEndPoint(point, textSize[0] / 1000, 90);
+
+      const altArrowTextLeft = arrow._calculateEndPoint(altArrowStartPoint, 0.01, 270);
+      const altArrowTextRight = arrow._calculateEndPoint(altArrowStartPoint, 0.01, 90);
+      const altTextStartPoint = query.bearing < 180
+        ? altArrowTextLeft
+        : altArrowTextRight;
+      const altArrowLength = query.radius / 1000 / 10;
+
+      new L.Arrow({
+        latlng: altArrowStartPoint,
+        degree: 360,
+        distance: altArrowLength,
+      }, {
+        distanceUnit: 'km',
+        arrowheadLength: 0.2 * altArrowLength,
+        color,
+        weight: arrowWeight,
+      }).addTo(map);
+
+      const altPath = query.bearing < 180
+        ? [L.latLng(altArrowStartPoint.lat, altArrowStartPoint.lng - 5),
+          altTextStartPoint]
+        : [altTextStartPoint,
+           L.latLng(altArrowStartPoint.lat, altArrowStartPoint.lng + 5)];
+
+      const altAlign = query.bearing < 180
+        ? LT.TextAlign.RIGHT
+        : LT.TextAlign.LEFT;
+
+      LT.textPath(altPath, `${query.alt} m`, {
+        color,
+        size: [query.radius / 20, 'm'],
+        verticalOffset: [-15, 'm'],
+        align: altAlign,
+      }).addTo(map);
+
+      L.polyline([altArrowTextLeft, altArrowTextRight]).addTo(map);
     }
   }
 }
