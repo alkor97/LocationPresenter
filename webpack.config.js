@@ -13,11 +13,16 @@ module.exports = {
     sourceMapFilename: 'bundle.map'
   },
   resolve: {
-   extensions: [".ts", ".js"]
+    extensions: [".ts", ".js"]
   },
   devtool: 'source-maps',
   module: {
     rules: [{
+      test: /\.ts$/,
+      enforce: 'pre',
+      loader: 'tslint-loader',
+      options: { emitErrors: true, failOnHint: true }
+    }, {
       test: /\.ts$/,
       use: 'awesome-typescript-loader',
       exclude: /node_modules/
