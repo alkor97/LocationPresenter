@@ -26,7 +26,6 @@ declare module 'leaflet' {
 
   export class Arrow extends L.FeatureGroup {
     constructor(data?: ArrowData, options?: ArrowOptions);
-    public _calculateEndPoint(latLng: L.LatLng, distance: number, degree: number): L.LatLng;
     protected initialize(data?: ArrowData, options?: ArrowOptions): void;
   }
 }
