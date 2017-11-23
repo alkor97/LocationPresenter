@@ -111,8 +111,6 @@ class TextLayer extends L.Layer {
     private projectLatLngs(): void {
         this.fromP = this.projectPoint(this.from);
         this.toP = this.projectPoint(this.to);
-        // tslint:disable-next-line:no-console
-        console.log(this.fromP + ' ' + this.toP);
     }
 
     private projectPoint(latLng: L.LatLngExpression): L.Point {
