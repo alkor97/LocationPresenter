@@ -31,8 +31,8 @@ export class ParsedQuery {
   public lng: number = 14.5445406;
   public alt: number = 37;
   public radius: number = 750;
-  public name: string = 'Frania';
-  public phone: string = '+48 123 456 789';
+  public name: string = 'Frania Bąbolewska';
+  public phone: string = '+48123456789';
   public bearing?: number;
   public speed?: number;
   public hasStreetView: boolean = false;

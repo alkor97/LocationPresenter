@@ -8,9 +8,48 @@ html, body, #map {
   height: 100vh;
   width: 100vw;
 }
-div.radiusIcon {
-  color: #3388ff;
-  background-color: rgba(255, 255, 255, 0.3);
-  font-weight: bold;
-  font-family: sans-serif;
+
+.leaflet-popup-content-wrapper {
+  background-color: #376091;
+  color:white;
+}
+
+.leaflet-popup-content-wrapper .popup {
+  width: 100%;
+}
+
+.leaflet-popup-content-wrapper a {
+  color: white;
+  text-decoration: none;
+}
+
+.leaflet-popup-content-wrapper .day {
+  font-size: smaller;
+  vertical-align: bottom;
+}
+
+.leaflet-popup-content-wrapper .date {
+  font-size: smaller;
+  vertical-align: top;
+}
+
+.leaflet-popup-content-wrapper .time {
+  font-size: large;
+}
+
+.leaflet-popup-content-wrapper .name {
+  font-size: medium;
+}
+
+.leaflet-popup-content-wrapper .provider img {
+  width: 32px;
+  height: 32px;
+}
+
+.leaflet-popup-tip {
+  background-color: #376091;
+}
+
+.leaflet-popup-close-button {
+  color: white;
 }
