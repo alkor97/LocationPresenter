@@ -15,7 +15,6 @@ export interface Query {
   readonly bearing?: number;
   readonly speed?: number;
   readonly hasStreetView: boolean;
-  readonly dbg?: number;
 }
 
 function now(): Date {
@@ -36,11 +35,10 @@ export class ParsedQuery {
   public bearing?: number;
   public speed?: number;
   public hasStreetView: boolean = false;
-  public dbg?: number = 0;
   [key: string]: any;
 }
 
-const NUMBER_PROPERTIES = {lat: 1, lng: 1, alt: 1, radius: 1, bearing: 1, speed: 1, dbg: 1};
+const NUMBER_PROPERTIES = {lat: 1, lng: 1, alt: 1, radius: 1, bearing: 1, speed: 1};
 const DATE_PROPERTIES = {date: 1};
 
 export function parseQuery(queryString: string): Query {
@@ -71,7 +69,7 @@ function parseValue(output: ParsedQuery, key: string, value: string): ParsedQuer
 
 function parseCSVQuery(csv: string): Query {
   const positionMapping = ['date', 'provider', 'lat', 'lng', 'alt', 'radius', 'name', 'phone',
-    'bearing', 'speed', 'dbg'];
+    'bearing', 'speed'];
   return csv.replace(/^q[\=]/, '')
     .split(',')
     .reduce((state: ParsedQuery, entry: string, position: number) => {

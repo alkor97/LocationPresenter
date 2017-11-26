@@ -13,7 +13,6 @@ describe('QueryParser', () => {
     phone: '+48 987 654 321',
     bearing: 56,
     speed: 6.78,
-    dbg: 1,
     // defaults, not part of external interface
     hasStreetView: false,
   };
@@ -24,7 +23,7 @@ describe('QueryParser', () => {
     const date = expected.date.toISOString();
     const actual = parseQuery(`?lat=${expected.lat}&lng=${expected.lng}&alt=${expected.alt}&radius=${expected.radius}`
       + `&name=${name}&phone=${phone}&bearing=${expected.bearing}&speed=${expected.speed}`
-      + `&dbg=${expected.dbg}&date=${date}&provider=${expected.provider}`);
+      + `&date=${date}&provider=${expected.provider}`);
     expect(actual).toEqual(expected);
   });
 
@@ -33,8 +32,7 @@ describe('QueryParser', () => {
     const phone = encodeURIComponent(expected.phone);
     const date = expected.date.toISOString();
     const actual = parseQuery(`?q=${date},${expected.provider},${expected.lat},${expected.lng},`
-      + `${expected.alt},${expected.radius},${name},${phone},${expected.bearing},${expected.speed},`
-      + `${expected.dbg}`);
+      + `${expected.alt},${expected.radius},${name},${phone},${expected.bearing},${expected.speed}`);
     expect(actual).toEqual(expected);
   });
 
@@ -57,6 +55,5 @@ describe('QueryParser', () => {
     expect(actual.phone).toEqual(expected.phone);
     expect(actual.bearing).toEqual(defaults.bearing);
     expect(actual.speed).toEqual(expected.speed);
-    expect(actual.dbg).toEqual(defaults.dbg);
   });
 });
