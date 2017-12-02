@@ -3,12 +3,21 @@
     "tslint:recommended",
     "tslint-eslint-rules"
   ],
-  "jsRules": {},
+  "jsRules": {
+    "quotemark": [true, "single"],
+    "trailing-comma": [false]
+  },
   "rules": {
     "quotemark": [true, "single"],
     "indent": [true, "spaces", 2],
     "semicolon": [true, "always", "ignore-interfaces"],
-    "interface-name": [false, "always-prefix"]
+    "interface-name": [false, "always-prefix"],
+    "trailing-comma": [false]
   },
-  "rulesDirectory": []
+  "rulesDirectory": [],
+  "linterOptions": {
+    "exclude": [
+      "coverage/**/*"
+    ]
+  }
 }
