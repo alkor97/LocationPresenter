@@ -1,11 +1,12 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
   entry: './src/index.ts',
   devServer: {
-    contentBase: "./dist"
+    contentBase: '/dist'
   },
   output: {
     filename: 'bundle.js',
@@ -13,19 +14,17 @@ module.exports = {
     sourceMapFilename: 'bundle.map'
   },
   resolve: {
-    extensions: [".ts", ".js"]
+    extensions: ['.ts', '.js']
   },
   devtool: 'source-maps',
   module: {
     rules: [{
       test: /\.ts$/,
-      enforce: 'pre',
-      loader: 'tslint-loader',
-      options: { emitErrors: true, failOnHint: true }
-    }, {
-      test: /\.ts$/,
-      use: 'awesome-typescript-loader',
-      exclude: /node_modules/
+      loader: 'ts-loader',
+      exclude: /node_modules/,
+      options: {
+        transpileOnly: true // type checking is performed in fork plugin
+      }
     }, {
       test: /\.css$/,
       use: [
@@ -37,7 +36,7 @@ module.exports = {
         loader: 'file-loader',
         options: {
           name: '[name].[ext]',
-          outputPath: "img/"
+          outputPath: 'img/'
         }
       }
     }, {
@@ -60,6 +59,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: 'src/assets/index.html',
       title: 'Location Presenter'
+    }),
+    new ForkTsCheckerWebpackPlugin({
+      tslint: true
     })
   ]
 };
