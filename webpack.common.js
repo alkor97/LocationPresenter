@@ -1,22 +1,15 @@
-const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
   entry: './src/index.ts',
-  devServer: {
-    contentBase: '/dist'
-  },
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    sourceMapFilename: 'bundle.map'
+    filename: 'bundle.js'
   },
   resolve: {
     extensions: ['.ts', '.js']
   },
-  devtool: 'source-maps',
   module: {
     rules: [{
       test: /\.ts$/,
@@ -53,9 +46,6 @@ module.exports = {
     }]
   },
   plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true
-    }),
     new HtmlWebpackPlugin({
       template: 'src/assets/index.html',
       title: 'Location Presenter'

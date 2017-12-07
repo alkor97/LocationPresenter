@@ -7,7 +7,8 @@
     "clean": "shx rm -rf ./dist && shx rm -rf ./coverage",
     "pretest": "shx test -e node_modules/canvas || shx mv node_modules/canvas-prebuilt node_modules/canvas",
     "test": "jest --coverage",
-    "compile": "webpack --optimize-minimize",
+    "start": "webpack-dev-server --open --config webpack.dev.js",
+    "compile": "webpack --config webpack.prod.js --optimize-minimize",
     "build": "npm test && npm run compile"
   },
   "keywords": [],
@@ -31,7 +32,9 @@
     "tslint-eslint-rules": "^4.1.1",
     "tslint-loader": "^3.5.3",
     "typescript": "^2.5.3",
-    "webpack": "^3.9.1"
+    "webpack": "^3.9.1",
+    "webpack-dev-server": "^2.9.7",
+    "webpack-merge": "^4.1.1"
   },
   "dependencies": {
     "leaflet": "^1.2.0",
