@@ -32,7 +32,7 @@ describe('QueryParser', () => {
     const phone = encodeURIComponent(expected.phone);
     const date = expected.date.toISOString();
     const actual = parseQuery(`?q=${date},${expected.provider},${expected.lat},${expected.lng},`
-      + `${expected.alt},${expected.radius},${name},${phone},${expected.bearing},${expected.speed}`);
+      + `${expected.alt},${expected.radius},${expected.bearing},${expected.speed},${phone},${name}`);
     expect(actual).toEqual(expected);
   });
 
@@ -49,7 +49,7 @@ describe('QueryParser', () => {
   it('returns defaults on missing CSV component', () => {
     const phone = encodeURIComponent(expected.phone);
     const actual = parseQuery(`?q=,,${expected.lat},${expected.lng},${expected.alt},${expected.radius},`
-      + `,${phone},,${expected.speed}`);
+      + `,${expected.speed},${phone},`);
     const defaults = new ParsedQuery();
     expect(actual.name).toEqual(defaults.name);
     expect(actual.phone).toEqual(expected.phone);

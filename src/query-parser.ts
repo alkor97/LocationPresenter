@@ -68,8 +68,7 @@ function parseValue(output: ParsedQuery, key: string, value: string): ParsedQuer
 }
 
 function parseCSVQuery(csv: string): Query {
-  const positionMapping = ['date', 'provider', 'lat', 'lng', 'alt', 'radius', 'name', 'phone',
-    'bearing', 'speed'];
+  const positionMapping = ['date', 'provider', 'lat', 'lng', 'alt', 'radius', 'bearing', 'speed', 'phone', 'name'];
   return csv.replace(/^q[\=]/, '')
     .split(',')
     .reduce((state: ParsedQuery, entry: string, position: number) => {
