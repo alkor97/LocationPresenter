@@ -1,9 +1,18 @@
 
-import { ParsedQuery, parseQuery } from '../query-parser';
+import { ParsedQuery, parseQuery, Provider } from '../query-parser';
 
 describe('QueryParser', () => {
+  function toString(date: Date): string {
+    return '' + date.getUTCFullYear()
+      + ('00' + (date.getUTCMonth() + 1)).slice(-2)
+      + ('00' + date.getUTCDate()).slice(-2)
+      + ('00' + date.getUTCHours()).slice(-2)
+      + ('00' + date.getUTCMinutes()).slice(-2)
+      + ('00' + date.getUTCSeconds()).slice(-2);
+    }
+
   const expected = {
-    date: new Date(2015, 3, 2, 15, 14, 13, 213),
+    date: new Date(2015, 3, 2, 15, 14, 13, 0),
     provider: 'network',
     lat: 12.3,
     lng: 23.4,
@@ -20,7 +29,7 @@ describe('QueryParser', () => {
   it('parses values correctly', () => {
     const name = encodeURIComponent(expected.name);
     const phone = encodeURIComponent(expected.phone);
-    const date = expected.date.toISOString();
+    const date = toString(expected.date);
     const actual = parseQuery(`?lat=${expected.lat}&lng=${expected.lng}&alt=${expected.alt}&radius=${expected.radius}`
       + `&name=${name}&phone=${phone}&bearing=${expected.bearing}&speed=${expected.speed}`
       + `&date=${date}&provider=${expected.provider}`);
@@ -30,7 +39,7 @@ describe('QueryParser', () => {
   it('parses CSV query correctly', () => {
     const name = encodeURIComponent(expected.name);
     const phone = encodeURIComponent(expected.phone);
-    const date = expected.date.toISOString();
+    const date = toString(expected.date);
     const actual = parseQuery(`?q=${date},${expected.provider},${expected.lat},${expected.lng},`
       + `${expected.alt},${expected.radius},${expected.bearing},${expected.speed},${phone},${name}`);
     expect(actual).toEqual(expected);
@@ -55,5 +64,23 @@ describe('QueryParser', () => {
     expect(actual.phone).toEqual(expected.phone);
     expect(actual.bearing).toEqual(defaults.bearing);
     expect(actual.speed).toEqual(expected.speed);
+  });
+
+  it('parses correctly request from application', () => {
+    const actual = '?q=20170513213841,gps,53,14,13,20,,,%2B48123456789,Test1';
+    const localExpected: ParsedQuery = {
+      date: new Date('2017-05-13T21:38:41Z'),
+      provider: Provider.GPS,
+      lat: 53,
+      lng: 14,
+      alt: 13,
+      radius: 20,
+      bearing: undefined,
+      speed: undefined,
+      phone: '+48123456789',
+      name: 'Test1',
+      hasStreetView: false
+    };
+    expect(parseQuery(actual)).toEqual(localExpected);
   });
 });

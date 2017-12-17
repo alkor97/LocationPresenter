@@ -50,15 +50,31 @@ export function parseQuery(queryString: string): Query {
   }
 }
 
+function parseDate(text: string): Date {
+  const date = new Date();
+  const re = new RegExp(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/);
+  const result = re.exec(text);
+  if (result) {
+    if (result.length > 1) { date.setUTCFullYear(parseInt(result[1], 10)); }
+    if (result.length > 2) { date.setUTCMonth(parseInt(result[2], 10) - 1); }
+    if (result.length > 3) { date.setUTCDate(parseInt(result[3], 10)); }
+    if (result.length > 4) { date.setUTCHours(parseInt(result[4], 10)); }
+    if (result.length > 5) { date.setUTCMinutes(parseInt(result[5], 10)); }
+    if (result.length > 6) { date.setUTCSeconds(parseInt(result[6], 10)); }
+    date.setUTCMilliseconds(0);
+  }
+  return date;
+}
+
 function parseValue(output: ParsedQuery, key: string, value: string): ParsedQuery {
   if (key in NUMBER_PROPERTIES) {
     output[key] = parseFloat(value);
   } else if (key in DATE_PROPERTIES) {
-    output[key] = new Date(Date.parse(value));
+    output[key] = parseDate(value);
   } else if (key === 'provider') {
-    if (value === 'gps') {
+    if (value.toLowerCase() === 'gps') {
       output[key] = Provider.GPS;
-    } else if (value === 'network') {
+    } else if (value.toLowerCase() === 'network') {
       output[key] = Provider.NETWORK;
     }
   } else {

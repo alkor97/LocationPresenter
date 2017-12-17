@@ -39,6 +39,9 @@ function formatPhone(phone: string): string {
         input = input.slice(0, -3);
     }
     groups.unshift(input);
+    if (groups.length > 0 && groups[0].startsWith('00')) {
+        groups[0] = '+' + groups[0].substr(2);
+    }
     return groups.join('&nbsp;');
 }
 
