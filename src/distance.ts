@@ -22,6 +22,10 @@ class OneMeter {
 const ONE_METER = new OneMeter();
 
 // tslint:disable-next-line:max-classes-per-file
+export class ConversionError extends Error {
+}
+
+// tslint:disable-next-line:max-classes-per-file
 export class Distance {
     public readonly value: number;
     public readonly unit: Unit;
@@ -32,6 +36,9 @@ export class Distance {
     }
 
     public to(unit: Unit): Distance | this {
+        if ((unit === Unit.PIXELS || this.unit === Unit.PIXELS) && unit !== this.unit) {
+            throw new ConversionError('Unable to convert between pixels and natural units');
+        }
         if (unit !== this.unit) {
             const source = this.value * ONE_METER[this.unit];
             const target = source / ONE_METER[unit];

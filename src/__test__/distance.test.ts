@@ -27,6 +27,14 @@ describe('Distance', () => {
     it('is correctly converted', () => {
         expect(D.kilometers(1).to(D.Unit.METERS).value).toEqual(1000);
     });
+    it('fails if converting between pixels and natural units', () => {
+        expect(() => {
+            D.meters(5).to(D.Unit.PIXELS);
+        }).toThrow();
+        expect(() => {
+            D.pixels(5).to(D.Unit.FEET);
+        }).toThrow();
+    });
     it('returns itself on no-change conversion', () => {
         const d = D.meters(13);
         expect(d.to(D.Unit.METERS)).toBe(d);
