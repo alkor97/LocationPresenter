@@ -5,14 +5,16 @@
   ],
   "jsRules": {
     "quotemark": [true, "single"],
-    "trailing-comma": [false]
+    "trailing-comma": [false],
+    "object-literal-sort-keys": [false]
   },
   "rules": {
     "quotemark": [true, "single"],
     "indent": [true, "spaces", 2],
     "semicolon": [true, "always", "ignore-interfaces"],
     "interface-name": [false, "always-prefix"],
-    "trailing-comma": [false]
+    "trailing-comma": [false],
+    "object-literal-sort-keys": [false]
   },
   "rulesDirectory": [],
   "linterOptions": {
