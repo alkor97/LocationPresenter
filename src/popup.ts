@@ -18,19 +18,6 @@ function getStreetViewLink(q: Query): string {
     return regularLink;
 }
 
-function preparePopupOld(q: Query): string {
-    const withStreetView = q.hasStreetView ? 'inline' : 'none';
-    const link = getStreetViewLink(q);
-    const date = q.date.toLocaleString();
-    const provider = q.provider !== Provider.UNKNOWN
-        ? `&nbsp;<img src="img/${q.provider}.png" width="16" height="16"/>`
-        : '';
-    return `${date}${provider}<br>
-            <h1>${q.name}&nbsp;<a style='display: ${withStreetView}' href='${link}'
-            target='_blank'><img src="img/eye.png" width="16" height="16"/></a></h1>
-            <i><a href="tel:${q.phone}">${q.phone}</a></i>`;
-}
-
 function formatPhone(phone: string): string {
     let input = phone.replace(/\s+/g, '');
     const groups = [];
@@ -49,8 +36,8 @@ export function preparePopup(q: Query): string {
     const withStreetView = q.hasStreetView ? 'inline' : 'none';
     const link = getStreetViewLink(q);
     const provider = q.provider !== Provider.UNKNOWN
-    ? `<img src="img/${q.provider}-inv.png" width="16" height="16"/>`
-    : '';
+        ? `<img src="img/${q.provider}-inv.png" width="16" height="16"/>`
+        : '';
 
     const dayOfWeek = q.date.toLocaleDateString(undefined, {weekday: 'long'}).toLocaleUpperCase();
     const hourMinute = q.date.toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit'}).toLocaleUpperCase();
