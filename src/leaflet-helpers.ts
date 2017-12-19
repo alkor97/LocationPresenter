@@ -11,7 +11,7 @@ export interface AccessibleMap extends L.Map {
     _renderer: AccessibleRenderer;
 }
 
-export function calculateEndPoint(latlng: L.LatLng, dist: D.Distance, degree: number): L.LatLng {
+export function calculateEndPoint(latlng: L.LatLng, dist: D.NaturalDistance, degree: number): L.LatLng {
     /*
      * http://www.codeguru.com/cpp/cpp/algorithms/article.php/c5115/Geographic-Distance-and-Azimuth-Calculations.htm
      */

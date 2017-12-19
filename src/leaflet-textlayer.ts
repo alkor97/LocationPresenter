@@ -104,7 +104,7 @@ class TextLayer extends L.Layer {
             const diagInMeters = this.from.distanceTo(this.to);
             const diagInPixels = this.fromP.distanceTo(this.toP);
 
-            return distance.to(D.Unit.METERS).value * diagInPixels / diagInMeters;
+            return (distance as D.NaturalDistance).to(D.Unit.METERS).value * diagInPixels / diagInMeters;
         }
     }
 

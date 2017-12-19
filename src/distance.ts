@@ -22,11 +22,7 @@ class OneMeter {
 const ONE_METER = new OneMeter();
 
 // tslint:disable-next-line:max-classes-per-file
-export class ConversionError extends Error {
-}
-
-// tslint:disable-next-line:max-classes-per-file
-export class Distance {
+class GenericDistance {
     public readonly value: number;
     public readonly unit: Unit;
 
@@ -35,50 +31,78 @@ export class Distance {
         this.unit = unit;
     }
 
-    public to(unit: Unit): Distance | this {
-        if ((unit === Unit.PIXELS || this.unit === Unit.PIXELS) && unit !== this.unit) {
-            throw new ConversionError('Unable to convert between pixels and natural units');
+    public multiply(value: number): NaturalDistance | this {
+        if (value !== 1) {
+            return new NaturalDistance(this.value * value, this.unit);
         }
+        return this;
+    }
+}
+
+export type NaturalDistanceUnits = Unit.METERS | Unit.KILOMETERS | Unit.NAUTICAL_MILES
+    | Unit.FEET | Unit.YARDS | Unit.MILES;
+
+// tslint:disable-next-line:max-classes-per-file
+export class NaturalDistance extends GenericDistance {
+    constructor(value: number = 0, unit: Unit = Unit.METERS) {
+        super(value, unit);
+    }
+
+    public to(unit: NaturalDistanceUnits): NaturalDistance | this {
         if (unit !== this.unit) {
             const source = this.value * ONE_METER[this.unit];
             const target = source / ONE_METER[unit];
-            return new Distance(target, unit);
-        }
-        return this;
-    }
-
-    public multiply(value: number): Distance | this {
-        if (value !== 1) {
-            return new Distance(this.value * value, this.unit);
+            return new NaturalDistance(target, unit);
         }
         return this;
     }
 }
 
-export function pixels(value: number): Distance {
-    return new Distance(value, Unit.PIXELS);
+// tslint:disable-next-line:max-classes-per-file
+export class PixelDistance extends GenericDistance {
+    constructor(value: number = 0) {
+        super(value, Unit.PIXELS);
+    }
+
+    public to(unit: Unit.PIXELS): PixelDistance | this {
+        return this;
+    }
 }
 
-export function meters(value: number): Distance {
-    return new Distance(value, Unit.METERS);
+export function pixels(value: number): PixelDistance {
+    return new PixelDistance(value);
 }
 
-export function kilometers(value: number): Distance {
-    return new Distance(value, Unit.KILOMETERS);
+export function meters(value: number): NaturalDistance {
+    return new NaturalDistance(value, Unit.METERS);
 }
 
-export function feet(value: number): Distance {
-    return new Distance(value, Unit.FEET);
+export function kilometers(value: number): NaturalDistance {
+    return new NaturalDistance(value, Unit.KILOMETERS);
 }
 
-export function yards(value: number): Distance {
-    return new Distance(value, Unit.YARDS);
+export function feet(value: number): NaturalDistance {
+    return new NaturalDistance(value, Unit.FEET);
 }
 
-export function miles(value: number): Distance {
-    return new Distance(value, Unit.MILES);
+export function yards(value: number): NaturalDistance {
+    return new NaturalDistance(value, Unit.YARDS);
 }
 
-export function nauticalMiles(value: number): Distance {
-    return new Distance(value, Unit.NAUTICAL_MILES);
+export function miles(value: number): NaturalDistance {
+    return new NaturalDistance(value, Unit.MILES);
+}
+
+export function nauticalMiles(value: number): NaturalDistance {
+    return new NaturalDistance(value, Unit.NAUTICAL_MILES);
+}
+
+export type Distance = NaturalDistance | PixelDistance;
+
+export function distance(value: number, unit: Unit): Distance {
+    if (unit === Unit.PIXELS) {
+        return new PixelDistance(value);
+    } else {
+        return new NaturalDistance(value, unit);
+    }
 }
