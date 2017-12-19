@@ -31,6 +31,7 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
 
   const textColor = '#3388ff';
   const weight = 3;
+  const textSize = D.meters(Math.max(5, query.radius / 10));
 
   if (query.bearing || query.bearing === 0) {
     // workaround: if arrow angle is 0 then line rendering is discarded;
@@ -50,21 +51,20 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
         weight,
       }).addTo(map);
 
-    const textSize = D.meters(query.radius / 10);
     const verticalOffset = query.bearing < 90 || query.bearing > 270 ? textSize.multiply(0.1) : textSize;
 
-    const raduisPoint = calculateEndPoint(point, D.meters(1.01 * query.radius), query.bearing);
+    const radiusPoint = calculateEndPoint(point, D.meters(1.05 * query.radius), query.bearing);
     const approxTextLength = 1;
 
-    let radiusPointStart = raduisPoint;
-    let radiusPointEnd = raduisPoint;
+    let radiusPointStart = radiusPoint;
+    let radiusPointEnd = radiusPoint;
     let textAlign;
 
     if (query.bearing < 180) {
-      radiusPointEnd = calculateEndPoint(raduisPoint, D.meters(query.radius), 90);
+      radiusPointEnd = calculateEndPoint(radiusPoint, D.meters(query.radius), 90);
       textAlign = TextAlign.START;
     } else {
-      radiusPointStart = calculateEndPoint(raduisPoint, D.meters(query.radius), 270);
+      radiusPointStart = calculateEndPoint(radiusPoint, D.meters(query.radius), 270);
       textAlign = TextAlign.END;
     }
 
@@ -77,7 +77,7 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
     }).addTo(map);
 
     const arrowHeadEndPoint = calculateEndPoint(point, D.meters(0.9 * query.radius), query.bearing);
-    const bearingVerticalOffset = D.meters(-20);
+    const bearingVerticalOffset = D.pixels(-5);
     const secondaryTextSize = textSize.multiply(0.8);
 
     // show bearing angle
@@ -118,10 +118,10 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
     }
   }
   if (query.alt) {
-    const altArrowHeight = D.meters(query.radius / 10);
+    const altArrowHeight = textSize;
     const rotate = (query.bearing || query.bearing === 0) && query.bearing < 180 ? 270 : 90;
     const altArrowBasePoint = calculateEndPoint(point, altArrowHeight, rotate);
-    const altTextNearPoint = calculateEndPoint(altArrowBasePoint, D.meters(10), rotate);
+    const altTextNearPoint = calculateEndPoint(altArrowBasePoint, textSize.multiply(0.5), rotate);
     const altTextFarPoint = calculateEndPoint(altTextNearPoint, D.meters(query.radius), rotate);
 
     new L.Arrow({
@@ -135,7 +135,6 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
         weight,
       }).addTo(map);
 
-    const textSize = D.meters(query.radius / 10);
     if (query.bearing && query.bearing < 180) {
       textLayer(altTextFarPoint, altTextNearPoint, `${query.alt} m`, {
         textColor,
