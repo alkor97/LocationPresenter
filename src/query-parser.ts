@@ -8,10 +8,10 @@ export interface Query {
   readonly provider?: Provider;
   readonly lat: number;
   readonly lng: number;
-  readonly alt: number;
-  readonly radius: number;
-  readonly name: string;
-  readonly phone: string;
+  readonly alt?: number;
+  readonly radius?: number;
+  readonly name?: string;
+  readonly phone?: string;
   readonly bearing?: number;
   readonly speed?: number;
   readonly hasStreetView: boolean;
@@ -23,19 +23,23 @@ function now(): Date {
   return date;
 }
 
-export class ParsedQuery {
+export class ParsedQuery implements Query {
   public date: Date = now();
-  public provider: Provider = Provider.UNKNOWN;
+  public provider?: Provider = Provider.UNKNOWN;
   public lat: number = 53.4296143;
   public lng: number = 14.5445406;
-  public alt: number = 37;
-  public radius: number = 750;
-  public name: string = 'Frania Bąbolewska';
-  public phone: string = '+48123456789';
-  public bearing?: number;
-  public speed?: number;
   public hasStreetView: boolean = false;
   [key: string]: any;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+class AllowedEntries extends ParsedQuery {
+  public alt: number = 1;
+  public radius: number = 1;
+  public name: string = 'x';
+  public phone: string = '1';
+  public bearing: number = 1;
+  public speed: number = 1;
 }
 
 const NUMBER_PROPERTIES = {lat: 1, lng: 1, alt: 1, radius: 1, bearing: 1, speed: 1};
@@ -100,8 +104,7 @@ function parseCSVQuery(csv: string): Query {
 }
 
 function parseObjectQuery(queryString: string): Query {
-  const allowed = new ParsedQuery();
-  allowed.bearing = allowed.speed = 0;
+  const allowed = new AllowedEntries();
   return queryString.split('&')
     .reduce((state: ParsedQuery, pairString: string) => {
       const pair = pairString.split('=');

@@ -44,8 +44,10 @@ export function preparePopup(q: Query): string {
     const day = q.date.getDate();
     const month = q.date.toLocaleDateString(undefined, {month: 'short'}).toLocaleUpperCase();
     const year = q.date.getFullYear();
-    const phoneLink = q.phone.replace(/\s+/g, '');
-    const phone = formatPhone(q.phone);
+    const phoneLink = q.phone ? q.phone.replace(/\s+/g, '') : '';
+    const phone = q.phone ? formatPhone(q.phone) : '';
+    const phoneSign = q.phone ? '✆&nbsp;' : '';
+    const name = q.name ? q.name : '';
     return `<table class="popup">
         <tr>
             <td class="day">${dayOfWeek}</td>
@@ -56,7 +58,7 @@ export function preparePopup(q: Query): string {
             <td class="date">${day}&nbsp;${month}&nbsp;${year}</td>
         </tr>
         <tr>
-            <td class="name" colspan="2">${q.name}</td>
+            <td class="name" colspan="2">${name}</td>
             <td>
                 <a style='display: ${withStreetView}' href='${link}' target='_blank'>
                     <img src="img/eye-inv.png"/>
@@ -64,7 +66,7 @@ export function preparePopup(q: Query): string {
             </td>
         </tr>
         <tr>
-            <td class="phone" colspan="3">✆&nbsp;<a href="tel:${phoneLink}">${phone}</a></td>
+            <td class="phone" colspan="3">${phoneSign}<a href="tel:${phoneLink}">${phone}</a></td>
         </tr>
     </table>`;
 }
