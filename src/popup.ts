@@ -1,5 +1,7 @@
 
+import * as D from './distance';
 import { Provider, Query } from './query-parser';
+import * as S from './speed';
 
 function isChromeOnAndroid() {
     const ua = navigator.userAgent;
@@ -32,6 +34,25 @@ function formatPhone(phone: string): string {
     return groups.join('&nbsp;');
 }
 
+function getInfoLine(name: string, value: number | string | undefined, suffix: string = ''): string {
+    if (value) {
+        return `<tr>
+            <th>${name}</th>
+            <td>${value}${suffix}</td>
+        </tr>`;
+    }
+    return '';
+}
+
+const DIRECTIONS = [
+    'N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'
+];
+
+function getDirection(bearing: number): string {
+    const normalized = ((bearing % 360) - 22.5) / 45;
+    return DIRECTIONS[Math.ceil(normalized) % DIRECTIONS.length];
+}
+
 export function preparePopup(q: Query): string {
     const withStreetView = q.hasStreetView ? 'inline' : 'none';
     const link = getStreetViewLink(q);
@@ -48,6 +69,21 @@ export function preparePopup(q: Query): string {
     const phone = q.phone ? formatPhone(q.phone) : '';
     const phoneSign = q.phone ? '✆&nbsp;' : '';
     const name = q.name ? q.name : '';
+
+    const altitudeLine = getInfoLine('altitude', q.alt, ' ' + D.Unit.METERS);
+    const radiusLine = getInfoLine('radius', q.radius, ' ' + D.Unit.METERS);
+    const direction = q.bearing
+        ? ` (${getDirection(q.bearing)})`
+        : '';
+    const bearingLine = getInfoLine('azimuth', q.bearing, '°' + direction);
+    const typedSpeed = q.speed
+        ? Math.round(
+            S.speed(q.speed, S.Unit.METERS_PER_SECOND)
+                .to(S.Unit.KILOMETERS_PER_HOUR)
+                .value)
+        : undefined;
+    const speedLine = getInfoLine('speed', typedSpeed, ' ' + S.Unit.KILOMETERS_PER_HOUR);
+
     return `<table class="popup">
         <tr>
             <td class="day">${dayOfWeek}</td>
@@ -59,14 +95,22 @@ export function preparePopup(q: Query): string {
         </tr>
         <tr>
             <td class="name" colspan="2">${name}</td>
-            <td>
-                <a style='display: ${withStreetView}' href='${link}' target='_blank'>
-                    <img src="img/eye-inv.png"/>
-                </a>
-            </td>
         </tr>
         <tr>
             <td class="phone" colspan="3">${phoneSign}<a href="tel:${phoneLink}">${phone}</a></td>
         </tr>
+        <tr>
+            <th>location</th>
+            <td>${q.lat}<br>${q.lng}</td>
+            <td>
+                <a id="popupStreetViewAvailable" style='display: ${withStreetView}' href='${link}' target='_blank'>
+                    <img src="img/eye-inv.png"/>
+                </a>
+            </td>
+        </tr>
+        ${altitudeLine}
+        ${radiusLine}
+        ${bearingLine}
+        ${speedLine}
     </table>`;
 }
