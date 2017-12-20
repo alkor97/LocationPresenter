@@ -21,14 +21,26 @@ class OneMeter {
 
 const ONE_METER = new OneMeter();
 
-// tslint:disable-next-line:max-classes-per-file
-class GenericDistance {
-    public readonly value: number;
-    public readonly unit: Unit;
+export type NaturalDistanceUnit = Unit.METERS | Unit.KILOMETERS | Unit.NAUTICAL_MILES
+    | Unit.FEET | Unit.YARDS | Unit.MILES;
 
-    constructor(value: number = 0, unit: Unit = Unit.METERS) {
+// tslint:disable-next-line:max-classes-per-file
+export class NaturalDistance {
+    public readonly value: number;
+    public readonly unit: NaturalDistanceUnit;
+
+    constructor(value: number = 0, unit: NaturalDistanceUnit = Unit.METERS) {
         this.value = value;
         this.unit = unit;
+    }
+
+    public to(unit: NaturalDistanceUnit): NaturalDistance | this {
+        if (unit !== this.unit) {
+            const source = this.value * ONE_METER[this.unit];
+            const target = source / ONE_METER[unit];
+            return new NaturalDistance(target, unit);
+        }
+        return this;
     }
 
     public multiply(value: number): NaturalDistance | this {
@@ -39,32 +51,23 @@ class GenericDistance {
     }
 }
 
-export type NaturalDistanceUnits = Unit.METERS | Unit.KILOMETERS | Unit.NAUTICAL_MILES
-    | Unit.FEET | Unit.YARDS | Unit.MILES;
-
 // tslint:disable-next-line:max-classes-per-file
-export class NaturalDistance extends GenericDistance {
-    constructor(value: number = 0, unit: Unit = Unit.METERS) {
-        super(value, unit);
-    }
+export class PixelDistance {
+    public readonly value: number;
+    public readonly unit: Unit.PIXELS;
 
-    public to(unit: NaturalDistanceUnits): NaturalDistance | this {
-        if (unit !== this.unit) {
-            const source = this.value * ONE_METER[this.unit];
-            const target = source / ONE_METER[unit];
-            return new NaturalDistance(target, unit);
-        }
-        return this;
-    }
-}
-
-// tslint:disable-next-line:max-classes-per-file
-export class PixelDistance extends GenericDistance {
     constructor(value: number = 0) {
-        super(value, Unit.PIXELS);
+        this.value = value;
     }
 
     public to(unit: Unit.PIXELS): PixelDistance | this {
+        return this;
+    }
+
+    public multiply(value: number): PixelDistance | this {
+        if (value !== 1) {
+            return new PixelDistance(this.value * value);
+        }
         return this;
     }
 }
