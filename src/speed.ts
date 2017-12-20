@@ -31,8 +31,8 @@ export class Speed {
         if (unit === this.unit) {
             return this;
         } else {
-            const source = this.value * ONE_METER_PER_SECOND[this.unit];
-            const target = source / ONE_METER_PER_SECOND[unit];
+            const source = this.value / ONE_METER_PER_SECOND[this.unit];
+            const target = source * ONE_METER_PER_SECOND[unit];
             return new Speed(target, unit);
         }
     }
