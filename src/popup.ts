@@ -34,23 +34,28 @@ function formatPhone(phone: string): string {
     return groups.join('&nbsp;');
 }
 
-function getInfoLine(name: string, value: number | string | undefined, suffix: string = ''): string {
+function getInfoLine(name: string, value: number | string | undefined, suffix: () => string = () => ''): string {
     if (value) {
         return `<tr>
             <th>${name}</th>
-            <td>${value}${suffix}</td>
+            <td>${value}${suffix()}</td>
         </tr>`;
     }
     return '';
 }
 
 const DIRECTIONS = [
-    'N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'
+    '↑N', '↗NE', '→E', '↘SE', '↓S', '↙SW', '←W', '↖NW'
 ];
 
 function getDirection(bearing: number): string {
     const normalized = ((bearing % 360) - 22.5) / 45;
-    return DIRECTIONS[Math.ceil(normalized) % DIRECTIONS.length];
+    return DIRECTIONS[Math.ceil(normalized) % DIRECTIONS.length].substr(1);
+}
+
+function getDirectionArrow(bearing: number): string {
+    const normalized = ((bearing % 360) - 22.5) / 45;
+    return DIRECTIONS[Math.ceil(normalized) % DIRECTIONS.length].substr(0, 1);
 }
 
 export function preparePopup(q: Query): string {
@@ -70,19 +75,20 @@ export function preparePopup(q: Query): string {
     const phoneSign = q.phone ? '✆&nbsp;' : '';
     const name = q.name ? q.name : '';
 
-    const altitudeLine = getInfoLine('altitude', q.alt, ' ' + D.Unit.METERS);
-    const radiusLine = getInfoLine('radius', q.radius, ' ' + D.Unit.METERS);
+    const altitudeLine = getInfoLine('altitude', q.alt, () => ' ' + D.Unit.METERS);
+    const radiusLine = getInfoLine('radius', q.radius, () => ' ' + D.Unit.METERS);
+    const directionArrow = q.bearing ? `${getDirectionArrow(q.bearing)}` : '';
     const direction = q.bearing
-        ? ` (${getDirection(q.bearing)})`
+        ? `${getDirection(q.bearing)} ${directionArrow}`
         : '';
-    const bearingLine = getInfoLine('azimuth', q.bearing, '°' + direction);
+    const bearingLine = getInfoLine('azimuth', q.bearing, () => ('° (' + direction + ')'));
     const typedSpeed = q.speed
         ? Math.round(
             S.speed(q.speed, S.Unit.METERS_PER_SECOND)
                 .to(S.Unit.KILOMETERS_PER_HOUR)
                 .value)
         : undefined;
-    const speedLine = getInfoLine('speed', typedSpeed, ' ' + S.Unit.KILOMETERS_PER_HOUR);
+    const speedLine = getInfoLine('speed', typedSpeed, () => ' ' + S.Unit.KILOMETERS_PER_HOUR);
 
     return `<table class="popup">
         <tr>
