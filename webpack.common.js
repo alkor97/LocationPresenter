@@ -48,7 +48,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'src/assets/index.html',
-      title: 'Location Presenter'
+      title: 'Location Presenter',
+      hash: true
     }),
     new ForkTsCheckerWebpackPlugin({
       tslint: true
