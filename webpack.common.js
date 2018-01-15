@@ -43,12 +43,20 @@ module.exports = {
     }, {
       test: /\.html$/,
       use: 'html-loader'
+    }, {
+      test: /\.json$/,
+      use: {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+          outputPath: 'translations/'
+        }
+      }
     }]
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: 'src/assets/index.html',
-      title: 'Location Presenter',
       hash: true
     }),
     new ForkTsCheckerWebpackPlugin({

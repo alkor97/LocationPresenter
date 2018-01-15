@@ -75,20 +75,21 @@ export function preparePopup(q: Query): string {
     const phoneSign = q.phone ? '✆&nbsp;' : '';
     const name = q.name ? q.name : '';
 
-    const altitudeLine = getInfoLine('altitude', q.alt, () => ' ' + D.Unit.METERS);
-    const radiusLine = getInfoLine('radius', q.radius, () => ' ' + D.Unit.METERS);
+    const altitudeLine = getInfoLine('altitude'.toLocaleString(), q.alt, () => ' ' + D.Unit.METERS);
+    const radiusLine = getInfoLine('radius'.toLocaleString(), q.radius, () => ' ' + D.Unit.METERS);
     const directionArrow = q.bearing ? `${getDirectionArrow(q.bearing)}` : '';
     const direction = q.bearing
         ? `${getDirection(q.bearing)} ${directionArrow}`
         : '';
-    const bearingLine = getInfoLine('azimuth', q.bearing, () => ('° (' + direction + ')'));
+    const bearingLine = getInfoLine('bearing'.toLocaleString(), q.bearing, () => ('° (' + direction + ')'));
     const typedSpeed = q.speed
         ? Math.round(
             S.speed(q.speed, S.Unit.METERS_PER_SECOND)
                 .to(S.Unit.KILOMETERS_PER_HOUR)
                 .value)
         : undefined;
-    const speedLine = getInfoLine('speed', typedSpeed, () => ' ' + S.Unit.KILOMETERS_PER_HOUR);
+    const speedLine = getInfoLine('speed'.toLocaleString(), typedSpeed, () => ' ' + S.Unit.KILOMETERS_PER_HOUR);
+    const location = 'location'.toLocaleString();
 
     return `<table class="popup">
         <tr>
@@ -106,7 +107,7 @@ export function preparePopup(q: Query): string {
             <td class="phone" colspan="3">${phoneSign}<a href="tel:${phoneLink}">${phone}</a></td>
         </tr>
         <tr>
-            <th>location</th>
+            <th>${location}</th>
             <td>${q.lat}<br>${q.lng}</td>
             <td>
                 <a id="popupStreetViewAvailable" style='display: ${withStreetView}' href='${link}' target='_blank'>

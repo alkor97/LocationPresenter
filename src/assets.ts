@@ -14,3 +14,6 @@ import 'leaflet/dist/images/marker-icon.png';
 import 'leaflet/dist/images/marker-shadow.png';
 
 import './assets/css/index.css';
+
+import './assets/translations/en.json';
+import './assets/translations/pl.json';

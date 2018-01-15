@@ -1,0 +1,8 @@
+{
+    "title": "Location Presenter",
+    "altitude": "altitude",
+    "radius": "radius",
+    "bearing": "azimuth",
+    "speed": "speed",
+    "location": "location"
+}

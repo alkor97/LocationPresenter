@@ -3,6 +3,7 @@ import 'leaflet-arrows';
 import './assets';
 import * as D from './distance';
 import { isStreetViewSupportedAt } from './has-street-view';
+import './l10n';
 import { calculateEndPoint } from './leaflet-helpers';
 import { TextAlign, textLayer } from './leaflet-textlayer';
 import { preparePopup } from './popup';
@@ -154,6 +155,8 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
 }
 
 (() => {
+  document.title = 'title'.toLocaleString();
+
   const defaultLocation = (() => {
     const defaults = new ParsedQuery();
     return L.latLng(defaults.lat, defaults.lng);
