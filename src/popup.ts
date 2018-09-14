@@ -90,6 +90,7 @@ export function preparePopup(q: Query): string {
         : undefined;
     const speedLine = getInfoLine('speed'.toLocaleString(), typedSpeed, () => ' ' + S.Unit.KILOMETERS_PER_HOUR);
     const location = 'location'.toLocaleString();
+    const addressLine = getInfoLine('address'.toLocaleString(), q.address);
 
     return `<table class="popup">
         <tr>
@@ -110,11 +111,12 @@ export function preparePopup(q: Query): string {
             <th>${location}</th>
             <td>${q.lat}<br>${q.lng}</td>
             <td>
-                <a id="popupStreetViewAvailable" style='display: ${withStreetView}' href='${link}' target='_blank'>
+                <a style='display: ${withStreetView}' href='${link}' target='_blank'>
                     <img src="img/eye-inv.png"/>
                 </a>
             </td>
         </tr>
+        ${addressLine}
         ${altitudeLine}
         ${radiusLine}
         ${bearingLine}

@@ -1,5 +1,6 @@
 import * as L from 'leaflet';
 import 'leaflet-arrows';
+import { getAddress } from './address-provider';
 import './assets';
 import * as D from './distance';
 import { isStreetViewSupportedAt } from './has-street-view';
@@ -56,7 +57,6 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
       const verticalOffset = query.bearing < 90 || query.bearing > 270 ? textSize.multiply(0.1) : textSize;
 
       const radiusPoint = calculateEndPoint(point, D.meters(1.05 * query.radius), query.bearing);
-      const approxTextLength = 1;
 
       let radiusPointStart = radiusPoint;
       let radiusPointEnd = radiusPoint;
@@ -166,6 +166,11 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
   const initialZoom = 13;
   const map = L.map('map').setView(defaultLocation, initialZoom);
   const location = L.latLng(query.lat, query.lng);
+
+  getAddress(location, navigator.language)
+    .then((address: string) => {
+      (query as ParsedQuery).address = address;
+    });
 
   if (query.bearing || query.bearing === 0) {
     isStreetViewSupportedAt(location).then((hasStreetView) => {

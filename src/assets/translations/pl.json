@@ -4,5 +4,6 @@
     "radius": "promień",
     "bearing": "azymut",
     "speed": "prędkość",
-    "location": "położenie"
+    "location": "położenie",
+    "address": "adres"
 }

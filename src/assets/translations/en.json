@@ -4,5 +4,6 @@
     "radius": "radius",
     "bearing": "azimuth",
     "speed": "speed",
-    "location": "location"
+    "location": "location",
+    "address": "address"
 }
