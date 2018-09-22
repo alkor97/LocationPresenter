@@ -90,9 +90,18 @@ export function preparePopup(q: Query): string {
         : undefined;
     const speedLine = getInfoLine('speed'.toLocaleString(), typedSpeed, () => ' ' + S.Unit.KILOMETERS_PER_HOUR);
     const location = 'location'.toLocaleString();
-    const addressLine = getInfoLine('address'.toLocaleString(), q.address);
 
-    return `<table class="popup">
+    let addressLine = '';
+    if (q.address) {
+        const addressHead = 'address'.toLocaleString();
+        addressLine = `<tr><th>${addressHead}</th><td id="addressLines" colspan="2">`
+            + q.address.map((v) => {
+                return '<p class="dont-break-out">' + v + '</p>';
+            }).join('')
+            + '</td></tr>';
+    }
+
+    return `<table class="popup"">
         <tr>
             <td class="day">${dayOfWeek}</td>
             <td rowspan="2" class="time">${hourMinute}</td>

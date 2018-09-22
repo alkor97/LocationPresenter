@@ -30,11 +30,10 @@ function joinNotNull(separator: string, ...values: OptionalString[]): string {
         .join(separator);
 }
 
-function formatAddress(response: NominatimResponse): string {
+function formatAddress(response: NominatimResponse): string[] {
     const address = response.address;
-    return joinNotNull(
-        '<br>',
-        joinNotNull(' ', response.name),
+    const dictionary: string[] = [];
+    return [
         joinNotNull(' ', address.road, address.house_number),
         joinNotNull(' ', address.suburb),
         joinNotNull(' ', address.city_district),
@@ -42,10 +41,19 @@ function formatAddress(response: NominatimResponse): string {
         joinNotNull(' ', address.county),
         joinNotNull(' ', address.state_district),
         joinNotNull(' ', address.state),
-        joinNotNull(' ', address.country));
+        joinNotNull(' ', address.country)
+    ].filter((value) => !!value).filter((value) => {
+        for (const item of dictionary) {
+            if (item.indexOf(value) > -1 || value.indexOf(item) > -1) {
+                return false;
+            }
+        }
+        dictionary.push(value);
+        return true;
+    });
 }
 
-export function getAddress(latLng: LatLng, language: string): Promise<string> {
+export function getAddress(latLng: LatLng, language: string): Promise<string[]> {
     const url = getNominatimUrl(latLng, language);
     return new Promise((resolve, reject) => {
         return fetch(url).then((response) => {

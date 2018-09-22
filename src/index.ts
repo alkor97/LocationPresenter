@@ -20,7 +20,10 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
   }).addTo(map);
 
   const marker = L.marker(point).addTo(map);
-  marker.bindPopup(popup);
+  const maxWidthValue = 200;
+  marker.bindPopup(popup, {
+    maxWidth: maxWidthValue
+  });
 
   if (query.radius) {
     const circle = L.circle(point, {
@@ -29,7 +32,9 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
       fillOpacity: 0.25,
       radius: query.radius,
     }).addTo(map);
-    circle.bindPopup(popup);
+    circle.bindPopup(popup, {
+      maxWidth: maxWidthValue
+    });
     map.flyToBounds(circle.getBounds());
 
     const textColor = '#3388ff';
@@ -168,7 +173,7 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
   const location = L.latLng(query.lat, query.lng);
 
   getAddress(location, navigator.language)
-    .then((address: string) => {
+    .then((address: string[]) => {
       (query as ParsedQuery).address = address;
     });
 

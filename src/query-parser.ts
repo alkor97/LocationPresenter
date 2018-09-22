@@ -15,7 +15,7 @@ export interface Query {
   readonly bearing?: number;
   readonly speed?: number;
   readonly hasStreetView: boolean;
-  readonly address?: string;
+  readonly address?: string[];
 }
 
 function now(): Date {
@@ -30,7 +30,7 @@ export class ParsedQuery implements Query {
   public lat: number = 53.4296143;
   public lng: number = 14.5445406;
   public hasStreetView: boolean = false;
-  public address?: string = undefined;
+  public address?: string[] = undefined;
   [key: string]: any;
 }
 
