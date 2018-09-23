@@ -13,16 +13,18 @@ export function isStreetViewSupportedAt(latLng: LatLng, imageProvider: ImageProv
   return new Promise((resolve, reject) => {
     const width = 64;
     const height = 32;
-    const retries = 4;
+    const retries = 1;
     const timeout = 1000;
 
-    const referenceImage = imageProvider(ImageType.EMPTY, width, height);
-    const referencePromise = retryPromise(() => getPromiseOfReferenceImageWithoutStreetView(referenceImage),
-      retries, timeout);
+    const referencePromise = retryPromise(() => {
+      const referenceImage = imageProvider(ImageType.EMPTY, width, height);
+      return getPromiseOfReferenceImageWithoutStreetView(referenceImage);
+    }, retries, timeout);
 
-    const actualImage = imageProvider(ImageType.ACTUAL, width, height);
-    const actualPromise = retryPromise(() => getPromiseOfActualStreetViewImage(latLng, actualImage),
-      retries, timeout);
+    const actualPromise = retryPromise(() => {
+      const actualImage = imageProvider(ImageType.ACTUAL, width, height);
+      return getPromiseOfActualStreetViewImage(latLng, actualImage);
+    }, retries, timeout);
 
     Promise.all([referencePromise, actualPromise]).then((images: Pixels[]) => {
       const [emptyStreetView, actualStreetView] = images;
@@ -34,28 +36,28 @@ export function isStreetViewSupportedAt(latLng: LatLng, imageProvider: ImageProv
   });
 }
 
-function getNamedPromise(promise: Promise<Pixels>, name: string): Promise<Pixels> {
+function getNamedPromise(promise: Promise<Pixels>, name: string, url: string): Promise<Pixels> {
   return new Promise((resolve, reject) => {
     promise.then((pixels) => {
       resolve(pixels);
-    }).catch((reason) => {
-      reject(`unable to load ${name} image`);
+    }).catch(() => {
+      reject(`unable to load ${name} image ${url}`);
     });
   });
 }
 
 function getPromiseOfReferenceImageWithoutStreetView(image: HTMLImageElement): Promise<Pixels> {
+  const url = getEmptyStreetViewUrl(image.width, image.height);
   return getNamedPromise(
-    getImagePromise(
-      getEmptyStreetViewUrl(image.width, image.height), image),
-      'empty street view');
+    getImagePromise(url, image),
+    'empty street view', url);
 }
 
 function getPromiseOfActualStreetViewImage(latLng: LatLng, image: HTMLImageElement): Promise<Pixels> {
+  const url = getStreetViewUrl(latLng, image.width, image.height);
   return getNamedPromise(
-    getImagePromise(
-      getStreetViewUrl(latLng, image.width, image.height), image),
-      'actual street view');
+    getImagePromise(url, image),
+    'actual street view', url);
 }
 
 function getImage(imageType: ImageType, width: number, height: number): HTMLImageElement {

@@ -2,7 +2,7 @@
  * @jest-environment ./src/__test__/JestEnvironmentWithImages
  */
 
-import { LatLng, latLng } from 'leaflet';
+import { latLng } from 'leaflet';
 import { isStreetViewSupportedAt } from '../has-street-view';
 
 describe('Street view', () => {

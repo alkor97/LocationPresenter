@@ -25,13 +25,18 @@ function _interopRequireDefault(obj) {
 class JSDomEnvironmentWithImages {
   constructor(config) {
     // lazy require
-    this.document = (jsDom || _load_jsdom()).default.jsdom('<!DOCTYPE html>', {
+    const jsdom = jsDom || _load_jsdom();
+    // prepare virtual console
+    const virtualConsole = jsdom.default.createVirtualConsole();
+    virtualConsole.sendTo(console);
+    this.document = jsdom.default.jsdom('<!DOCTYPE html>', {
       url: config.testURL,
-      // changes begin: added support for loading images
+      // added support for loading images
       features: {
         FetchExternalResources: ['img']
-      }
-      // changes end: added support for loading images
+      },
+      // added virtual console to report test failure details
+      virtualConsole
     });
 
     const global = this.global = this.document.defaultView;
