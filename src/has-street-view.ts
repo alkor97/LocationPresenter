@@ -9,7 +9,8 @@ export enum ImageType {
 }
 export type ImageProvider = (type: ImageType, width: number, height: number) => HTMLImageElement;
 
-export function isStreetViewSupportedAt(latLng: LatLng, imageProvider: ImageProvider = getImage): Promise<boolean> {
+export function isStreetViewSupportedAt(latLng: LatLng, key: string = '',
+                                        imageProvider: ImageProvider = getImage): Promise<boolean> {
   return new Promise((resolve, reject) => {
     const width = 64;
     const height = 32;
@@ -18,12 +19,12 @@ export function isStreetViewSupportedAt(latLng: LatLng, imageProvider: ImageProv
 
     const referencePromise = retryPromise(() => {
       const referenceImage = imageProvider(ImageType.EMPTY, width, height);
-      return getPromiseOfReferenceImageWithoutStreetView(referenceImage);
+      return getPromiseOfReferenceImageWithoutStreetView(referenceImage, key);
     }, retries, timeout);
 
     const actualPromise = retryPromise(() => {
       const actualImage = imageProvider(ImageType.ACTUAL, width, height);
-      return getPromiseOfActualStreetViewImage(latLng, actualImage);
+      return getPromiseOfActualStreetViewImage(latLng, actualImage, key);
     }, retries, timeout);
 
     Promise.all([referencePromise, actualPromise]).then((images: Pixels[]) => {
@@ -46,15 +47,15 @@ function getNamedPromise(promise: Promise<Pixels>, name: string, url: string): P
   });
 }
 
-function getPromiseOfReferenceImageWithoutStreetView(image: HTMLImageElement): Promise<Pixels> {
-  const url = getEmptyStreetViewUrl(image.width, image.height);
+function getPromiseOfReferenceImageWithoutStreetView(image: HTMLImageElement, key: string): Promise<Pixels> {
+  const url = getEmptyStreetViewUrl(image.width, image.height, key);
   return getNamedPromise(
     getImagePromise(url, image),
     'empty street view', url);
 }
 
-function getPromiseOfActualStreetViewImage(latLng: LatLng, image: HTMLImageElement): Promise<Pixels> {
-  const url = getStreetViewUrl(latLng, image.width, image.height);
+function getPromiseOfActualStreetViewImage(latLng: LatLng, image: HTMLImageElement, key: string): Promise<Pixels> {
+  const url = getStreetViewUrl(latLng, image.width, image.height, key);
   return getNamedPromise(
     getImagePromise(url, image),
     'actual street view', url);
@@ -104,10 +105,12 @@ function getPixelsPromise(image: HTMLImageElement): Promise<Pixels> {
   });
 }
 
-export function getEmptyStreetViewUrl(width: number, height: number): string {
-  return getStreetViewUrl(createLatLng(0, 0), width, height);
+export function getEmptyStreetViewUrl(width: number, height: number, key: string): string {
+  return getStreetViewUrl(createLatLng(0, 0), width, height, key);
 }
 
-export function getStreetViewUrl(latLng: LatLng, width: number, height: number): string {
-  return `http://maps.googleapis.com/maps/api/streetview?size=${width}x${height}&location=${latLng.lat},${latLng.lng}`;
+export function getStreetViewUrl(latLng: LatLng, width: number, height: number, key: string): string {
+  const auth = key ? `&key=${key}` : '';
+  // tslint:disable-next-line:max-line-length
+  return `http://maps.googleapis.com/maps/api/streetview?size=${width}x${height}&location=${latLng.lat},${latLng.lng}${auth}`;
 }

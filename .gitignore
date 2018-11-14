@@ -59,3 +59,9 @@ typings/
 
 # Output files
 dist/
+
+# history
+.history/
+
+# Private keys
+src/__test__/private.ts

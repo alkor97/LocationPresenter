@@ -16,6 +16,7 @@ export interface Query {
   readonly speed?: number;
   readonly hasStreetView: boolean;
   readonly address?: string[];
+  readonly key?: string;
 }
 
 function now(): Date {
@@ -31,6 +32,7 @@ export class ParsedQuery implements Query {
   public lng: number = 14.5445406;
   public hasStreetView: boolean = false;
   public address?: string[] = undefined;
+  public key?: string = undefined;
   [key: string]: any;
 }
 
@@ -90,7 +92,8 @@ function parseValue(output: ParsedQuery, key: string, value: string): ParsedQuer
 }
 
 function parseCSVQuery(csv: string): Query {
-  const positionMapping = ['date', 'provider', 'lat', 'lng', 'alt', 'radius', 'bearing', 'speed', 'phone', 'name'];
+  const positionMapping = ['date', 'provider', 'lat', 'lng', 'alt', 'radius', 'bearing', 'speed', 'phone', 'name',
+                           'key'];
   return csv.replace(/^q[\=]/, '')
     .split(',')
     .reduce((state: ParsedQuery, entry: string, position: number) => {

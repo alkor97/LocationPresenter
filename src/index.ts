@@ -178,7 +178,7 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
     });
 
   if (query.bearing || query.bearing === 0) {
-    isStreetViewSupportedAt(location).then((hasStreetView) => {
+    isStreetViewSupportedAt(location, query.key).then((hasStreetView) => {
       (query as ParsedQuery).hasStreetView = hasStreetView;
     });
   }
