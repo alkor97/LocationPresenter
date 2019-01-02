@@ -73,7 +73,7 @@ export function preparePopup(q: Query): string {
     const phoneLink = q.phone ? q.phone.replace(/\s+/g, '') : '';
     const phone = q.phone ? formatPhone(q.phone) : '';
     const phoneSign = q.phone ? '✆&nbsp;' : '';
-    const name = q.name ? q.name : '';
+    const name = q.name ? q.name : 'yourLocation'.toLocaleString();
 
     const altitudeLine = getInfoLine('altitude'.toLocaleString(), q.alt, () => ' ' + D.Unit.METERS);
     const radiusLine = getInfoLine('radius'.toLocaleString(), q.radius, () => ' ' + D.Unit.METERS);
