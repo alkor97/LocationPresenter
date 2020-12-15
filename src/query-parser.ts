@@ -17,7 +17,6 @@ export interface Query {
   readonly bearingAccuracy?: number;
   readonly speed?: number;
   readonly speedAccuracy?: number;
-  readonly hasStreetView: boolean;
   readonly address?: string[];
   readonly key?: string;
 }
@@ -33,7 +32,6 @@ export class ParsedQuery implements Query {
   public provider?: Provider = Provider.UNKNOWN;
   public lat: number = 53.4296143;
   public lng: number = 14.5445406;
-  public hasStreetView: boolean = false;
   public address?: string[] = undefined;
   public key?: string = undefined;
   [key: string]: any;

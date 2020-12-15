@@ -3,23 +3,6 @@ import * as D from './distance';
 import { Provider, Query } from './query-parser';
 import * as S from './speed';
 
-function isChromeOnAndroid() {
-    const ua = navigator.userAgent;
-    return ua.match(/android/i) && ua.match(/chrome/i);
-}
-
-function getStreetViewLink(q: Query): string {
-    const prefix = 'http://maps.google.com/maps?q=&layer=c&cbll=';
-    const regularLink = `${prefix}${q.lat},${q.lng}&cbp=0,${q.bearing},0,0,0`;
-    if (isChromeOnAndroid()) {
-        const fallback = encodeURI(regularLink);
-        return 'intent://view/#Intent;package=com.google.android.apps.maps;scheme=google.streetview:'
-            + `cbll=${q.lat},${q.lng}&cbp=1,${q.bearing},,0,1&mz=15;`
-            + `S.browser_fallback_url=${fallback};end;`;
-    }
-    return regularLink;
-}
-
 function formatPhone(phone: string): string {
     let input = phone.replace(/\s+/g, '');
     const groups = [];
@@ -63,8 +46,6 @@ function withAccuracy(accuracy?: number): string {
 }
 
 export function preparePopup(q: Query): string {
-    const withStreetView = q.hasStreetView ? 'inline' : 'none';
-    const link = getStreetViewLink(q);
     const provider = q.provider !== Provider.UNKNOWN
         ? `<img src="img/${q.provider}-inv.png" width="16" height="16"/>`
         : '';
@@ -132,11 +113,7 @@ export function preparePopup(q: Query): string {
         <tr>
             <th>${location}</th>
             <td>${q.lat}<br>${q.lng}</td>
-            <td>
-                <a style='display: ${withStreetView}' href='${link}' target='_blank'>
-                    <img src="img/eye-inv.png"/>
-                </a>
-            </td>
+            <td></td>
         </tr>
         ${addressLine}
         ${altitudeLine}

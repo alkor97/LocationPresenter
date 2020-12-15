@@ -25,8 +25,6 @@ describe('QueryParser', () => {
     bearingAccuracy: 20.3,
     speed: 6.78,
     speedAccuracy: 2.3,
-    // defaults, not part of external interface
-    hasStreetView: false,
   };
 
   it('parses values correctly', () => {
@@ -87,8 +85,7 @@ describe('QueryParser', () => {
       speed: undefined,
       speedAccuracy: undefined,
       phone: '+48123456789',
-      name: 'Test1',
-      hasStreetView: false
+      name: 'Test1'
     };
     expect(parseQuery(actual)).toEqual(localExpected);
   });
@@ -108,8 +105,7 @@ describe('QueryParser', () => {
       speed: 21,
       speedAccuracy: 2,
       phone: '+48123456789',
-      name: 'Test1',
-      hasStreetView: false
+      name: 'Test1'
     };
     expect(parseQuery(actual)).toEqual(localExpected);
   });

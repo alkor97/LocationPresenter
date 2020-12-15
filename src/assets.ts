@@ -1,6 +1,5 @@
 
 import './assets/favicon.ico';
-import './assets/img/eye-inv.png';
 import './assets/img/gps-inv.png';
 import './assets/img/network-inv.png';
 

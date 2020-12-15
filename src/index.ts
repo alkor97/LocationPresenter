@@ -3,7 +3,6 @@ import 'leaflet-arrows';
 import { getAddress } from './address-provider';
 import './assets';
 import * as D from './distance';
-import { isStreetViewSupportedAt } from './has-street-view';
 import './l10n';
 import { calculateEndPoint } from './leaflet-helpers';
 import { TextAlign, textLayer } from './leaflet-textlayer';
@@ -176,11 +175,5 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
     .then((address: string[]) => {
       (query as ParsedQuery).address = address;
     });
-
-  if (query.bearing || query.bearing === 0) {
-    isStreetViewSupportedAt(location, query.key).then((hasStreetView) => {
-      (query as ParsedQuery).hasStreetView = hasStreetView;
-    });
-  }
   locationSet(map, query, location);
 })();
