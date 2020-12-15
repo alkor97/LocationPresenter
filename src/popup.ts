@@ -58,6 +58,10 @@ function getDirectionArrow(bearing: number): string {
     return DIRECTIONS[Math.ceil(normalized) % DIRECTIONS.length].substr(0, 1);
 }
 
+function withAccuracy(accuracy?: number): string {
+    return accuracy ? ` ±${accuracy} ` : ' ';
+}
+
 export function preparePopup(q: Query): string {
     const withStreetView = q.hasStreetView ? 'inline' : 'none';
     const link = getStreetViewLink(q);
@@ -75,20 +79,29 @@ export function preparePopup(q: Query): string {
     const phoneSign = q.phone ? '✆&nbsp;' : '';
     const name = q.name ? q.name : 'yourLocation'.toLocaleString();
 
-    const altitudeLine = getInfoLine('altitude'.toLocaleString(), q.alt, () => ' ' + D.Unit.METERS);
+    const altitudeLine = getInfoLine('altitude'.toLocaleString(), q.alt,
+        () => (withAccuracy(q.altAccuracy) + D.Unit.METERS));
     const radiusLine = getInfoLine('radius'.toLocaleString(), q.radius, () => ' ' + D.Unit.METERS);
     const directionArrow = q.bearing ? `${getDirectionArrow(q.bearing)}` : '';
     const direction = q.bearing
         ? `${getDirection(q.bearing)} ${directionArrow}`
         : '';
-    const bearingLine = getInfoLine('bearing'.toLocaleString(), q.bearing, () => ('° (' + direction + ')'));
+    const bearingLine = getInfoLine('bearing'.toLocaleString(), q.bearing,
+        () => ('° ' + withAccuracy(q.bearingAccuracy) + '(' + direction + ')'));
     const typedSpeed = q.speed
         ? Math.round(
             S.speed(q.speed, S.Unit.METERS_PER_SECOND)
                 .to(S.Unit.KILOMETERS_PER_HOUR)
                 .value)
         : undefined;
-    const speedLine = getInfoLine('speed'.toLocaleString(), typedSpeed, () => ' ' + S.Unit.KILOMETERS_PER_HOUR);
+    const typedSpeedAccuracy = q.speedAccuracy
+        ? Math.round(
+            S.speed(q.speedAccuracy, S.Unit.METERS_PER_SECOND)
+                .to(S.Unit.KILOMETERS_PER_HOUR)
+                .value)
+        : undefined;
+    const speedLine = getInfoLine('speed'.toLocaleString(), typedSpeed,
+        () => (withAccuracy(typedSpeedAccuracy) + S.Unit.KILOMETERS_PER_HOUR));
     const location = 'location'.toLocaleString();
 
     let addressLine = '';

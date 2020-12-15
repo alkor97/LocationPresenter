@@ -8,12 +8,15 @@ export interface Query {
   readonly provider?: Provider;
   readonly lat: number;
   readonly lng: number;
-  readonly alt?: number;
   readonly radius?: number;
+  readonly alt?: number;
+  readonly altAccuracy?: number;
   readonly name?: string;
   readonly phone?: string;
   readonly bearing?: number;
+  readonly bearingAccuracy?: number;
   readonly speed?: number;
+  readonly speedAccuracy?: number;
   readonly hasStreetView: boolean;
   readonly address?: string[];
   readonly key?: string;
@@ -38,15 +41,19 @@ export class ParsedQuery implements Query {
 
 // tslint:disable-next-line:max-classes-per-file
 class AllowedEntries extends ParsedQuery {
-  public alt: number = 1;
   public radius: number = 1;
+  public alt: number = 1;
+  public altAccuracy: number = 1;
   public name: string = 'x';
   public phone: string = '1';
   public bearing: number = 1;
+  public bearingAccuracy: number = 1;
   public speed: number = 1;
+  public speedAccuracy: number = 1;
 }
 
-const NUMBER_PROPERTIES = {lat: 1, lng: 1, alt: 1, radius: 1, bearing: 1, speed: 1};
+const NUMBER_PROPERTIES = {lat: 1, lng: 1, radius: 1, alt: 1, altAccuracy: 1, bearing: 1, bearingAccuracy: 1,
+  speed: 1, speedAccuracy: 1};
 const DATE_PROPERTIES = {date: 1};
 
 export function parseQuery(queryString: string): Query {
@@ -92,8 +99,8 @@ function parseValue(output: ParsedQuery, key: string, value: string): ParsedQuer
 }
 
 function parseCSVQuery(csv: string): Query {
-  const positionMapping = ['date', 'provider', 'lat', 'lng', 'alt', 'radius', 'bearing', 'speed', 'phone', 'name',
-                           'key'];
+  const positionMapping = ['date', 'provider', 'lat', 'lng', 'radius', 'alt', 'altAccuracy',
+    'bearing', 'bearingAccuracy', 'speed', 'speedAccuracy', 'phone', 'name', 'key'];
   return csv.replace(/^q[\=]/, '')
     .split(',')
     .reduce((state: ParsedQuery, entry: string, position: number) => {

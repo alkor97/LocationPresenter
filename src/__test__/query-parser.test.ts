@@ -16,12 +16,15 @@ describe('QueryParser', () => {
     provider: 'network',
     lat: 12.3,
     lng: 23.4,
-    alt: 34,
     radius: 450,
+    alt: 34,
+    altAccuracy: 1.2,
     name: 'Jan Kowalski',
     phone: '+48 987 654 321',
     bearing: 56,
+    bearingAccuracy: 20.3,
     speed: 6.78,
+    speedAccuracy: 2.3,
     // defaults, not part of external interface
     hasStreetView: false,
   };
@@ -30,9 +33,11 @@ describe('QueryParser', () => {
     const name = encodeURIComponent(expected.name);
     const phone = encodeURIComponent(expected.phone);
     const date = toString(expected.date);
-    const actual = parseQuery(`?lat=${expected.lat}&lng=${expected.lng}&alt=${expected.alt}&radius=${expected.radius}`
-      + `&name=${name}&phone=${phone}&bearing=${expected.bearing}&speed=${expected.speed}`
-      + `&date=${date}&provider=${expected.provider}`);
+    const actual = parseQuery(`?lat=${expected.lat}&lng=${expected.lng}&radius=${expected.radius}`
+      + `&alt=${expected.alt}&altAccuracy=${expected.altAccuracy}`
+      + `&bearing=${expected.bearing}&bearingAccuracy=${expected.bearingAccuracy}`
+      + `&speed=${expected.speed}&speedAccuracy=${expected.speedAccuracy}`
+      + `&name=${name}&phone=${phone}&date=${date}&provider=${expected.provider}`);
     expect(actual).toEqual(expected);
   });
 
@@ -40,8 +45,9 @@ describe('QueryParser', () => {
     const name = encodeURIComponent(expected.name);
     const phone = encodeURIComponent(expected.phone);
     const date = toString(expected.date);
-    const actual = parseQuery(`?q=${date},${expected.provider},${expected.lat},${expected.lng},`
-      + `${expected.alt},${expected.radius},${expected.bearing},${expected.speed},${phone},${name}`);
+    const actual = parseQuery(`?q=${date},${expected.provider},${expected.lat},${expected.lng},${expected.radius},`
+      + `${expected.alt},${expected.altAccuracy},${expected.bearing},${expected.bearingAccuracy},`
+      + `${expected.speed},${expected.speedAccuracy},${phone},${name}`);
     expect(actual).toEqual(expected);
   });
 
@@ -57,8 +63,8 @@ describe('QueryParser', () => {
 
   it('returns defaults on missing CSV component', () => {
     const phone = encodeURIComponent(expected.phone);
-    const actual = parseQuery(`?q=,,${expected.lat},${expected.lng},${expected.alt},${expected.radius},`
-      + `,${expected.speed},${phone},`);
+    const actual = parseQuery(`?q=,,${expected.lat},${expected.lng},${expected.radius},${expected.alt},,`
+      + `,,${expected.speed},,${phone},`);
     const defaults = new ParsedQuery();
     expect(actual.name).toEqual(defaults.name);
     expect(actual.phone).toEqual(expected.phone);
@@ -67,16 +73,40 @@ describe('QueryParser', () => {
   });
 
   it('parses correctly request from application', () => {
-    const actual = '?q=20170513213841,gps,53,14,13,20,,,%2B48123456789,Test1';
+    const actual = '?q=20170513213841,gps,53,14,20,13,,,,,,%2B48123456789,Test1';
     const localExpected: ParsedQuery = {
       date: new Date('2017-05-13T21:38:41Z'),
       provider: Provider.GPS,
       lat: 53,
       lng: 14,
-      alt: 13,
       radius: 20,
+      alt: 13,
+      altAccuracy: undefined,
       bearing: undefined,
+      bearingAccuracy: undefined,
       speed: undefined,
+      speedAccuracy: undefined,
+      phone: '+48123456789',
+      name: 'Test1',
+      hasStreetView: false
+    };
+    expect(parseQuery(actual)).toEqual(localExpected);
+  });
+
+  it('parses correctly complete request', () => {
+    const actual = '?q=20170513213841,gps,53,14,20,13,2,137,15,21,2,%2B48123456789,Test1';
+    const localExpected: ParsedQuery = {
+      date: new Date('2017-05-13T21:38:41Z'),
+      provider: Provider.GPS,
+      lat: 53,
+      lng: 14,
+      radius: 20,
+      alt: 13,
+      altAccuracy: 2,
+      bearing: 137,
+      bearingAccuracy: 15,
+      speed: 21,
+      speedAccuracy: 2,
       phone: '+48123456789',
       name: 'Test1',
       hasStreetView: false
