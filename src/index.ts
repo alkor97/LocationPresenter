@@ -14,7 +14,7 @@ function locationSet(map: L.Map, query: Query, point: L.LatLng) {
     return preparePopup(query);
   };
 
-  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+  L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>',
   }).addTo(map);
 
