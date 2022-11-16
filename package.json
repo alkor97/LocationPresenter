@@ -20,7 +20,7 @@
     "file-loader": "^0.11.2",
     "fork-ts-checker-webpack-plugin": "^0.2.10",
     "html-loader": "^0.5.5",
-    "html-webpack-plugin": "^2.30.1",
+    "html-webpack-plugin": "^5.5.0",
     "jest": "^21.2.1",
     "shx": "^0.2.2",
     "style-loader": "^0.18.2",
